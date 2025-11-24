@@ -27,9 +27,8 @@ LABELS_PATH = "model/final_classes.npy"
 model = load_model(MODEL_PATH)
 labels = np.load(LABELS_PATH, allow_pickle=True).item()
 
-# convert dict → ordered list
+# Convert dict → ordered list
 label_list = [cls for cls, idx in sorted(labels.items(), key=lambda x: x[1])]
-
 
 # -----------------------
 # Prediction API
@@ -40,8 +39,8 @@ async def predict(file: UploadFile = File(...)):
 
     img_array = preprocess_image(image)
     preds = model.predict(img_array)[0]
-    predicted_idx = int(np.argmax(preds))
 
+    predicted_idx = int(np.argmax(preds))
     result = label_list[predicted_idx]
 
     return {
@@ -49,11 +48,9 @@ async def predict(file: UploadFile = File(...)):
         "confidence": float(np.max(preds))
     }
 
-
 @app.get("/")
 def home():
     return {"status": "Backend is running!"}
-
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=10000)
